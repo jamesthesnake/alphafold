@@ -26,12 +26,14 @@ fi
 
 if ! command -v aria2c &> /dev/null ; then
     echo "Error: aria2c could not be found. Please install aria2c (sudo apt install aria2)."
-    exit
+    exit 1
 fi
 
 DOWNLOAD_DIR="$1"
 ROOT_DIR="${DOWNLOAD_DIR}/mgnify"
-SOURCE_URL="ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/peptide_database/2018_12/mgy_clusters.fa.gz"
+# Mirror of:
+# ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/peptide_database/2022_05/mgy_clusters.fa.gz
+SOURCE_URL="https://storage.googleapis.com/alphafold-databases/v2.3/mgy_clusters_2022_05.fa.gz"
 BASENAME=$(basename "${SOURCE_URL}")
 
 mkdir --parents "${ROOT_DIR}"
