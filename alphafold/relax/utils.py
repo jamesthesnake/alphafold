@@ -14,22 +14,9 @@
 
 """Utils for minimization."""
 import io
-
+from alphafold.common import residue_constants
 from Bio import PDB
 import numpy as np
-from simtk.openmm import app as openmm_app
-from simtk.openmm.app.internal.pdbstructure import PdbStructure
-
-from alphafold.common import residue_constants
-
-
-def overwrite_pdb_coordinates(pdb_str: str, pos) -> str:
-  pdb_file = io.StringIO(pdb_str)
-  structure = PdbStructure(pdb_file)
-  topology = openmm_app.PDBFile(structure).getTopology()
-  with io.StringIO() as f:
-    openmm_app.PDBFile.writeFile(topology, pos, f)
-    return f.getvalue()
 
 
 def overwrite_b_factors(pdb_str: str, bfactors: np.ndarray) -> str:
@@ -48,7 +35,7 @@ def overwrite_b_factors(pdb_str: str, bfactors: np.ndarray) -> str:
     raise ValueError(
         f'Invalid final dimension size for bfactors: {bfactors.shape[-1]}.')
 
-  parser = PDB.PDBParser()
+  parser = PDB.PDBParser(QUIET=True)
   handle = io.StringIO(pdb_str)
   structure = parser.get_structure('', handle)
 
@@ -76,8 +63,7 @@ def assert_equal_nonterminal_atom_types(
   """Checks that pre- and post-minimized proteins have same atom set."""
   # Ignore any terminal OXT atoms which may have been added by minimization.
   oxt = residue_constants.atom_order['OXT']
-  no_oxt_mask = np.ones(shape=atom_mask.shape, dtype=np.bool)
+  no_oxt_mask = np.ones(shape=atom_mask.shape, dtype=bool)
   no_oxt_mask[..., oxt] = False
   np.testing.assert_almost_equal(ref_atom_mask[no_oxt_mask],
                                  atom_mask[no_oxt_mask])
-

@@ -14,13 +14,16 @@
 
 """Tests for shape_helpers."""
 
+from alphafold.model.tf import shape_helpers
 import numpy as np
 import tensorflow.compat.v1 as tf
 
-from alphafold.model.tf import shape_helpers
-
 
 class ShapeTest(tf.test.TestCase):
+
+  def setUp(self):
+    super().setUp()
+    tf.disable_v2_behavior()
 
   def test_shape_list(self):
     """Test that shape_list can allow for reshaping to dynamic shapes."""
@@ -36,5 +39,4 @@ class ShapeTest(tf.test.TestCase):
 
 
 if __name__ == '__main__':
-  tf.disable_v2_behavior()
   tf.test.main()
